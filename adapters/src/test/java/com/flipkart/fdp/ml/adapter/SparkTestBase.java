@@ -1,40 +1,35 @@
 package com.flipkart.fdp.ml.adapter;
 
-import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 /**
  * Base class for test that need to create and use a spark context.
  */
 public class SparkTestBase {
-    private static final Logger LOG = LoggerFactory.getLogger(SparkTestBase.class);
-    protected JavaSparkContext sc;
-    protected SQLContext sqlContext;
+    protected transient SparkSession spark;
+    protected transient JavaSparkContext jsc;
 
     @Before
-    public void setup() {
-        SparkConf sparkConf = new SparkConf();
-        String master = "local[2]";
-        sparkConf.setMaster(master);
-        sparkConf.setAppName("Local Spark Unit Test");
-        sc = new JavaSparkContext(new SparkContext(sparkConf));
-        sqlContext = new SQLContext(sc);
+    public void setUp() throws IOException {
+        spark = SparkSession.builder()
+                .master("local[2]")
+                .appName(getClass().getSimpleName())
+                .getOrCreate();
+        jsc = new JavaSparkContext(spark.sparkContext());
     }
 
     @After
     public void tearDown() {
-        sc.close();
-        sqlContext = null;
+        spark.stop();
+        spark = null;
     }
-
     /**
      * An alias for RowFactory.create.
      */

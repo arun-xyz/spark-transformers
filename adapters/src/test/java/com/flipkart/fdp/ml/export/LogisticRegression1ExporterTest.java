@@ -5,7 +5,8 @@ import com.flipkart.fdp.ml.importer.ModelImporter;
 import com.flipkart.fdp.ml.modelinfo.LogisticRegressionModelInfo;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.LogisticRegressionModel;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertEquals;
@@ -17,13 +18,13 @@ public class LogisticRegression1ExporterTest extends SparkTestBase {
         //prepare data
         String datapath = "src/test/resources/binary_classification_test.libsvm";
 
-        DataFrame trainingData = sqlContext.read().format("libsvm").load(datapath);
+        Dataset<Row> trainingData = spark.read().format("libsvm").load(datapath);
 
         //Train model in spark
         LogisticRegressionModel lrmodel = new LogisticRegression().fit(trainingData);
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(lrmodel, trainingData);
+        byte[] exportedModel = ModelExporter.export(lrmodel);
 
         //Import it back
         LogisticRegressionModelInfo importedModel = (LogisticRegressionModelInfo) ModelImporter.importModelInfo(exportedModel);
@@ -35,7 +36,7 @@ public class LogisticRegression1ExporterTest extends SparkTestBase {
         assertEquals(lrmodel.numFeatures(), importedModel.getNumFeatures(), 0.01);
         assertEquals(lrmodel.getThreshold(), importedModel.getThreshold(), 0.01);
         for (int i = 0; i < importedModel.getNumFeatures(); i++)
-            assertEquals(lrmodel.weights().toArray()[i], importedModel.getWeights()[i], 0.01);
+            assertEquals(lrmodel.coefficients().toArray()[i], importedModel.getWeights()[i], 0.01);
 
         assertEquals(lrmodel.getFeaturesCol(), importedModel.getInputKeys().iterator().next());
         assertEquals(lrmodel.getPredictionCol(), importedModel.getOutputKey());

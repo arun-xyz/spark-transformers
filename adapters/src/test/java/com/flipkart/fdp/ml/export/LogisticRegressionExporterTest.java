@@ -19,13 +19,13 @@ public class LogisticRegressionExporterTest extends SparkTestBase {
     @Test
     public void shouldExportAndImportCorrectly() {
         String datapath = "src/test/resources/binary_classification_test.libsvm";
-        JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(sc.sc(), datapath).toJavaRDD();
+        JavaRDD<LabeledPoint> data = MLUtils.loadLibSVMFile(jsc.sc(), datapath).toJavaRDD();
 
         //Train model in spark
         LogisticRegressionModel lrmodel = new LogisticRegressionWithSGD().run(data.rdd());
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(lrmodel, null);
+        byte[] exportedModel = ModelExporter.export(lrmodel);
 
         //Import it back
         LogisticRegressionModelInfo importedModel = (LogisticRegressionModelInfo) ModelImporter.importModelInfo(exportedModel);

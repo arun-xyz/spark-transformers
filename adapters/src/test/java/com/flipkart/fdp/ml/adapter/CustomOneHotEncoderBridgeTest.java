@@ -1,3 +1,4 @@
+/*
 package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.CustomOneHotEncoder;
@@ -26,9 +27,11 @@ import java.util.Map;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+*/
 /**
  * Created by shubhranshu.shekhar on 21/06/16.
- */
+ *//*
+
 public class CustomOneHotEncoderBridgeTest  extends SparkTestBase {
     @Test
     public void testCustomOneHotEncoding() {
@@ -93,3 +96,4 @@ public class CustomOneHotEncoderBridgeTest  extends SparkTestBase {
         }
     }
 }
+*/

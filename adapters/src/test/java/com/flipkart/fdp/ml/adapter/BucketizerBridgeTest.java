@@ -4,7 +4,7 @@ import com.flipkart.fdp.ml.export.ModelExporter;
 import com.flipkart.fdp.ml.importer.ModelImporter;
 import com.flipkart.fdp.ml.transformer.Transformer;
 import org.apache.spark.ml.feature.Bucketizer;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
@@ -40,7 +40,7 @@ public class BucketizerBridgeTest extends SparkTestBase {
                 cr(2, validData[2]),
                 cr(3, validData[3]));
 
-        DataFrame df = sqlContext.createDataFrame(trainingData, schema);
+        Dataset<Row> df = spark.createDataFrame(trainingData, schema);
 
         Bucketizer sparkModel = new Bucketizer()
                 .setInputCol("feature")
@@ -48,12 +48,12 @@ public class BucketizerBridgeTest extends SparkTestBase {
                 .setSplits(splits);
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(sparkModel, df);
+        byte[] exportedModel = ModelExporter.export(sparkModel);
 
         //Import and get Transformer
         Transformer transformer = ModelImporter.importAndGetTransformer(exportedModel);
 
-        Row[] sparkOutput = sparkModel.transform(df).orderBy("id").select("id", "feature", "result").collect();
+        List<Row> sparkOutput = sparkModel.transform(df).orderBy("id").select("id", "feature", "result").collectAsList();
 
         for (Row r : sparkOutput) {
             double input = r.getDouble(1);

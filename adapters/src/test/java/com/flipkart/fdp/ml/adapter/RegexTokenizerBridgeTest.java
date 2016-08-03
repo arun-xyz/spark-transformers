@@ -5,7 +5,7 @@ import com.flipkart.fdp.ml.importer.ModelImporter;
 import com.flipkart.fdp.ml.transformer.Transformer;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.spark.ml.feature.RegexTokenizer;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -34,7 +34,7 @@ public class RegexTokenizerBridgeTest extends SparkTestBase {
                 cr("Test of tok."),
                 cr("Te,st.  punct")
         );
-        DataFrame dataset = sqlContext.createDataFrame(trainingData, schema);
+        Dataset<Row> dataset = spark.createDataFrame(trainingData, schema);
 
         //train model in spark
         RegexTokenizer sparkModel = new RegexTokenizer()
@@ -46,12 +46,12 @@ public class RegexTokenizerBridgeTest extends SparkTestBase {
                 .setMinTokenLength(3);
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(sparkModel, dataset);
+        byte[] exportedModel = ModelExporter.export(sparkModel);
 
         //Import and get Transformer
         Transformer transformer = ModelImporter.importAndGetTransformer(exportedModel);
 
-        Row[] pairs = sparkModel.transform(dataset).select("rawText", "tokens").collect();
+        List<Row> pairs = sparkModel.transform(dataset).select("rawText", "tokens").collectAsList();
         for (Row row : pairs) {
 
             Map<String, Object> data = new HashMap<String, Object>();

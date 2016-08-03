@@ -9,7 +9,7 @@ import org.apache.spark.ml.PipelineStage;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.feature.HashingTF;
 import org.apache.spark.ml.feature.RegexTokenizer;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.spark.sql.types.DataTypes.*;
@@ -35,7 +36,7 @@ public class PipelineBridgeTest extends SparkTestBase {
                 createStructField("text", StringType, false),
                 createStructField("label", DoubleType, false)
         });
-        DataFrame trainingData = sqlContext.createDataFrame(Arrays.asList(
+        Dataset<Row> trainingData = spark.createDataFrame(Arrays.asList(
                 cr(0L, "a b c d e spark", 1.0),
                 cr(1L, "b d", 0.0),
                 cr(2L, "spark f g h", 1.0),
@@ -65,7 +66,7 @@ public class PipelineBridgeTest extends SparkTestBase {
 
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(sparkPipelineModel, trainingData);
+        byte[] exportedModel = ModelExporter.export(sparkPipelineModel);
         System.out.println(new String(exportedModel));
 
         //Import and get Transformer
@@ -76,7 +77,7 @@ public class PipelineBridgeTest extends SparkTestBase {
                 createStructField("id", LongType, false),
                 createStructField("text", StringType, false),
         });
-        DataFrame testData = sqlContext.createDataFrame(Arrays.asList(
+        Dataset<Row> testData = spark.createDataFrame(Arrays.asList(
                 cr(4L, "spark i j k"),
                 cr(5L, "l m n"),
                 cr(6L, "mapreduce spark"),
@@ -84,7 +85,7 @@ public class PipelineBridgeTest extends SparkTestBase {
         ), testSchema);
 
         //verify that predictions for spark pipeline and exported pipeline are the same
-        Row[] predictions = sparkPipelineModel.transform(testData).select("id", "text", "probability", "prediction").collect();
+        List<Row> predictions = sparkPipelineModel.transform(testData).select("id", "text", "probability", "prediction").collectAsList();
         for (Row r : predictions) {
             System.out.println(r);
             double sparkPipelineOp = r.getDouble(3);

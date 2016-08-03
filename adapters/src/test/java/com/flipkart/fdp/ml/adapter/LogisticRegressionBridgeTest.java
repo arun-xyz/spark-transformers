@@ -23,13 +23,13 @@ public class LogisticRegressionBridgeTest extends SparkTestBase {
     public void testLogisticRegression() {
         //prepare data
         String datapath = "src/test/resources/binary_classification_test.libsvm";
-        JavaRDD<LabeledPoint> trainingData = MLUtils.loadLibSVMFile(sc.sc(), datapath).toJavaRDD();
+        JavaRDD<LabeledPoint> trainingData = MLUtils.loadLibSVMFile(jsc.sc(), datapath).toJavaRDD();
 
         //Train model in spark
         LogisticRegressionModel lrmodel = new LogisticRegressionWithSGD().run(trainingData.rdd());
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(lrmodel, null);
+        byte[] exportedModel = ModelExporter.export(lrmodel);
 
         //Import and get Transformer
         Transformer transformer = ModelImporter.importAndGetTransformer(exportedModel);

@@ -3,13 +3,19 @@ package com.flipkart.fdp.ml.adapter;
 import com.flipkart.fdp.ml.export.ModelExporter;
 import com.flipkart.fdp.ml.importer.ModelImporter;
 import com.flipkart.fdp.ml.transformer.Transformer;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.ml.feature.StandardScaler;
 import org.apache.spark.ml.feature.StandardScalerModel;
-import org.apache.spark.mllib.linalg.Vector;
-import org.apache.spark.mllib.linalg.Vectors;
-import org.apache.spark.mllib.regression.LabeledPoint;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.ml.linalg.Vector;
+import org.apache.spark.ml.linalg.VectorUDT;
+import org.apache.spark.ml.linalg.Vectors;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.apache.spark.sql.RowFactory;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.Metadata;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -42,13 +48,20 @@ public class StandardScalerBridgeTest extends SparkTestBase {
 
     @Test
     public void testStandardScaler() {
-        //prepare data
-        List<LabeledPoint> localTraining = Arrays.asList(
-                new LabeledPoint(1.0, Vectors.dense(data[0])),
-                new LabeledPoint(2.0, Vectors.dense(data[1])),
-                new LabeledPoint(3.0, Vectors.dense(data[2])));
-        DataFrame df = sqlContext.createDataFrame(sc.parallelize(localTraining), LabeledPoint.class);
 
+
+        JavaRDD<Row> jrdd = jsc.parallelize(Arrays.asList(
+                RowFactory.create(1.0, Vectors.dense(data[0])),
+                RowFactory.create(2.0, Vectors.dense(data[1])),
+                RowFactory.create(3.0, Vectors.dense(data[2]))
+        ));
+
+        StructType schema = new StructType(new StructField[]{
+                new StructField("label", DataTypes.DoubleType, false, Metadata.empty()),
+                new StructField("features", new VectorUDT(), false, Metadata.empty())
+        });
+
+        Dataset<Row> df = spark.createDataFrame(jrdd, schema);
 
         //train model in spark
         StandardScalerModel sparkModelNone = new StandardScaler()
@@ -81,44 +94,44 @@ public class StandardScalerBridgeTest extends SparkTestBase {
 
 
         //Export model, import it back and get transformer
-        byte[] exportedModel = ModelExporter.export(sparkModelNone, df);
+        byte[] exportedModel = ModelExporter.export(sparkModelNone);
         final Transformer transformerNone = ModelImporter.importAndGetTransformer(exportedModel);
 
-        exportedModel = ModelExporter.export(sparkModelWithMean, df);
+        exportedModel = ModelExporter.export(sparkModelWithMean);
         final Transformer transformerWithMean = ModelImporter.importAndGetTransformer(exportedModel);
 
-        exportedModel = ModelExporter.export(sparkModelWithStd, df);
+        exportedModel = ModelExporter.export(sparkModelWithStd);
         final Transformer transformerWithStd = ModelImporter.importAndGetTransformer(exportedModel);
 
-        exportedModel = ModelExporter.export(sparkModelWithBoth, df);
+        exportedModel = ModelExporter.export(sparkModelWithBoth);
         final Transformer transformerWithBoth = ModelImporter.importAndGetTransformer(exportedModel);
 
 
         //compare predictions
-        Row[] sparkNoneOutput = sparkModelNone.transform(df).orderBy("label").select("features", "scaledOutput").collect();
+        List<Row> sparkNoneOutput = sparkModelNone.transform(df).orderBy("label").select("features", "scaledOutput").collectAsList();
         assertCorrectness(sparkNoneOutput, data, transformerNone);
 
-        Row[] sparkWithMeanOutput = sparkModelWithMean.transform(df).orderBy("label").select("features", "scaledOutput").collect();
+        List<Row> sparkWithMeanOutput = sparkModelWithMean.transform(df).orderBy("label").select("features", "scaledOutput").collectAsList();
         assertCorrectness(sparkWithMeanOutput, resWithMean, transformerWithMean);
 
-        Row[] sparkWithStdOutput = sparkModelWithStd.transform(df).orderBy("label").select("features", "scaledOutput").collect();
+        List<Row> sparkWithStdOutput = sparkModelWithStd.transform(df).orderBy("label").select("features", "scaledOutput").collectAsList();
         assertCorrectness(sparkWithStdOutput, resWithStd, transformerWithStd);
 
-        Row[] sparkWithBothOutput = sparkModelWithBoth.transform(df).orderBy("label").select("features", "scaledOutput").collect();
+        List<Row> sparkWithBothOutput = sparkModelWithBoth.transform(df).orderBy("label").select("features", "scaledOutput").collectAsList();
         assertCorrectness(sparkWithBothOutput, resWithBoth, transformerWithBoth);
 
     }
 
-    private void assertCorrectness(Row[] sparkOutput, double[][] expected, Transformer transformer) {
+    private void assertCorrectness(List<Row> sparkOutput, double[][] expected, Transformer transformer) {
         for (int i = 0; i < 2; i++) {
-            double[] input = ((Vector) sparkOutput[i].get(0)).toArray();
+            double[] input = ((Vector) sparkOutput.get(i).get(0)).toArray();
 
             Map<String, Object> data = new HashMap<String, Object>();
             data.put("features", input);
             transformer.transform(data);
             double[] transformedOp = (double[]) data.get("scaledOutput");
 
-            double[] sparkOp = ((Vector) sparkOutput[i].get(1)).toArray();
+            double[] sparkOp = ((Vector) sparkOutput.get(i).get(1)).toArray();
             assertArrayEquals(transformedOp, sparkOp, 0.01);
             assertArrayEquals(transformedOp, expected[i], 0.01);
         }

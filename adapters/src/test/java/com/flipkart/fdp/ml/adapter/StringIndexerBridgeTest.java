@@ -5,7 +5,7 @@ import com.flipkart.fdp.ml.importer.ModelImporter;
 import com.flipkart.fdp.ml.transformer.Transformer;
 import org.apache.spark.ml.feature.StringIndexer;
 import org.apache.spark.ml.feature.StringIndexerModel;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -34,7 +34,7 @@ public class StringIndexerBridgeTest extends SparkTestBase {
         });
         List<Row> trainingData = Arrays.asList(
                 cr(0, "a"), cr(1, "b"), cr(2, "c"), cr(3, "a"), cr(4, "a"), cr(5, "c"));
-        DataFrame dataset = sqlContext.createDataFrame(trainingData, schema);
+        Dataset<Row> dataset = spark.createDataFrame(trainingData, schema);
 
         //train model in spark
         StringIndexerModel model = new StringIndexer()
@@ -42,13 +42,13 @@ public class StringIndexerBridgeTest extends SparkTestBase {
                 .setOutputCol("labelIndex").fit(dataset);
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(model, dataset);
+        byte[] exportedModel = ModelExporter.export(model);
 
         //Import and get Transformer
         Transformer transformer = ModelImporter.importAndGetTransformer(exportedModel);
 
         //compare predictions
-        Row[] sparkOutput = model.transform(dataset).orderBy("id").select("id", "label", "labelIndex").collect();
+        List<Row> sparkOutput = model.transform(dataset).orderBy("id").select("id", "label", "labelIndex").collectAsList();
         for (Row row : sparkOutput) {
 
             Map<String, Object> data = new HashMap<String, Object>();

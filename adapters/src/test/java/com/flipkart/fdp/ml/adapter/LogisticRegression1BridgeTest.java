@@ -5,10 +5,11 @@ import com.flipkart.fdp.ml.importer.ModelImporter;
 import com.flipkart.fdp.ml.transformer.Transformer;
 import org.apache.spark.ml.classification.LogisticRegression;
 import org.apache.spark.ml.classification.LogisticRegressionModel;
-import org.apache.spark.mllib.linalg.Vector;
+import org.apache.spark.ml.linalg.Vector;
 import org.apache.spark.mllib.regression.LabeledPoint;
 import org.apache.spark.mllib.util.MLUtils;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
+
 public class LogisticRegression1BridgeTest extends SparkTestBase {
 
     @Test
@@ -24,21 +26,21 @@ public class LogisticRegression1BridgeTest extends SparkTestBase {
         //prepare data
         String datapath = "src/test/resources/binary_classification_test.libsvm";
 
-        DataFrame trainingData = sqlContext.read().format("libsvm").load(datapath);
+        Dataset<Row> trainingData = spark.read().format("libsvm").load(datapath);
 
         //Train model in spark
         LogisticRegressionModel lrmodel = new LogisticRegression().fit(trainingData);
 
         //Export this model
-        byte[] exportedModel = ModelExporter.export(lrmodel, trainingData);
+        byte[] exportedModel = ModelExporter.export(lrmodel);
 
         //Import and get Transformer
         Transformer transformer = ModelImporter.importAndGetTransformer(exportedModel);
 
         //validate predictions
-        List<LabeledPoint> testPoints = MLUtils.loadLibSVMFile(sc.sc(), datapath).toJavaRDD().collect();
+        List<LabeledPoint> testPoints = MLUtils.loadLibSVMFile(jsc.sc(), datapath).toJavaRDD().collect();
         for (LabeledPoint i : testPoints) {
-            Vector v = i.features();
+            Vector v = i.features().asML();
             double actual = lrmodel.predict(v);
 
             Map<String, Object> data = new HashMap<String, Object>();
