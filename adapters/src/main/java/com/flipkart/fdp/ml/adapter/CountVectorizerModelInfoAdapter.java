@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.CountVectorizerModelInfo;
 import org.apache.spark.ml.feature.CountVectorizerModel;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,7 +12,7 @@ import java.util.Set;
  */
 public class CountVectorizerModelInfoAdapter extends AbstractModelInfoAdapter<CountVectorizerModel, CountVectorizerModelInfo> {
     @Override
-    public CountVectorizerModelInfo getModelInfo(final CountVectorizerModel from, final DataFrame df) {
+    public CountVectorizerModelInfo getModelInfo(final CountVectorizerModel from) {
         final CountVectorizerModelInfo modelInfo = new CountVectorizerModelInfo();
         modelInfo.setMinTF(from.getMinTF());
         modelInfo.setVocabulary(from.vocabulary());

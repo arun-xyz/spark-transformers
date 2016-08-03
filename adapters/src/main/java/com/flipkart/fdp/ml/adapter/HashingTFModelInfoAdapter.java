@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.HashingTFModelInfo;
 import org.apache.spark.ml.feature.HashingTF;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,7 +12,7 @@ import java.util.Set;
  */
 public class HashingTFModelInfoAdapter extends AbstractModelInfoAdapter<HashingTF, HashingTFModelInfo> {
     @Override
-    public HashingTFModelInfo getModelInfo(final HashingTF from, DataFrame df) {
+    public HashingTFModelInfo getModelInfo(final HashingTF from) {
         final HashingTFModelInfo modelInfo = new HashingTFModelInfo();
         modelInfo.setNumFeatures(from.getNumFeatures());
         Set<String> inputKeys = new LinkedHashSet<String>();

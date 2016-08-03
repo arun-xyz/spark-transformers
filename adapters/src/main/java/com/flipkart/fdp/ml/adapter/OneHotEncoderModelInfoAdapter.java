@@ -1,3 +1,4 @@
+/*
 package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.OneHotEncoderModelInfo;
@@ -12,14 +13,18 @@ import org.apache.spark.sql.DataFrame;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.apache.hadoop.hdfs.server.namenode.ListPathsServlet.df;
+
+*/
 /**
  * Transforms Spark's {@link OneHotEncoder} in MlLib to  {@link com.flipkart.fdp.ml.modelinfo.OneHotEncoderModelInfo} object
  * that can be exported through {@link com.flipkart.fdp.ml.export.ModelExporter}
- */
+ *//*
+
 public class OneHotEncoderModelInfoAdapter extends AbstractModelInfoAdapter<OneHotEncoder, OneHotEncoderModelInfo> {
 
     @Override
-    public OneHotEncoderModelInfo getModelInfo(final OneHotEncoder from, DataFrame df) {
+    public OneHotEncoderModelInfo getModelInfo(final OneHotEncoder from) {
         OneHotEncoderModelInfo modelInfo = new OneHotEncoderModelInfo();
         String inputColumn = from.getInputCol();
 
@@ -51,3 +56,4 @@ public class OneHotEncoderModelInfoAdapter extends AbstractModelInfoAdapter<OneH
         return OneHotEncoderModelInfo.class;
     }
 }
+*/

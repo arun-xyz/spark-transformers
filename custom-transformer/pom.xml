@@ -13,13 +13,11 @@
 
     <url>http://maven.apache.org</url>
     <properties>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <encoding>UTF-8</encoding>
         <scala.tools.version>2.10.5</scala.tools.version>
         <!-- Put the Scala version of the cluster -->
         <scala.version>2.10.5</scala.version>
     </properties>
+
     <build>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <!--<testSourceDirectory>src/test/scala</testSourceDirectory> -->
@@ -60,14 +58,14 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-core_2.10</artifactId>
-            <version>1.6.0</version>
+            <artifactId>spark-core_2.11</artifactId>
+            <version>${spark.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
-            <artifactId>spark-mllib_2.10</artifactId>
-            <version>1.6.0</version>
+            <artifactId>spark-mllib_2.11</artifactId>
+            <version>${spark.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.StringIndexerModelInfo;
 import org.apache.spark.ml.feature.StringIndexerModel;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -16,7 +15,7 @@ import java.util.Set;
 public class StringIndexerModelInfoAdapter extends AbstractModelInfoAdapter<StringIndexerModel, StringIndexerModelInfo> {
 
     @Override
-    public StringIndexerModelInfo getModelInfo(final StringIndexerModel from, DataFrame df) {
+    public StringIndexerModelInfo getModelInfo(final StringIndexerModel from) {
         final String[] labels = from.labels();
         final Map<String, Double> labelToIndex = new HashMap<String, Double>();
         for (int i = 0; i < labels.length; i++) {

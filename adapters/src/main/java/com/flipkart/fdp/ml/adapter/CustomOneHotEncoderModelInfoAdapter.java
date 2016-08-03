@@ -1,3 +1,4 @@
+/*
 package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.CustomOneHotEncoderModel;
@@ -8,13 +9,15 @@ import org.apache.spark.sql.DataFrame;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+*/
 /**
  * Created by shubhranshu.shekhar on 21/06/16.
- */
+ *//*
+
 public class CustomOneHotEncoderModelInfoAdapter extends AbstractModelInfoAdapter<CustomOneHotEncoderModel, OneHotEncoderModelInfo> {
 
     @Override
-    public OneHotEncoderModelInfo getModelInfo(final CustomOneHotEncoderModel from, DataFrame df) {
+    public OneHotEncoderModelInfo getModelInfo(final CustomOneHotEncoderModel from) {
         OneHotEncoderModelInfo modelInfo = new OneHotEncoderModelInfo();
 
         modelInfo.setNumTypes(from.vectorSize());
@@ -35,3 +38,4 @@ public class CustomOneHotEncoderModelInfoAdapter extends AbstractModelInfoAdapte
         return OneHotEncoderModelInfo.class;
     }
 }
+*/

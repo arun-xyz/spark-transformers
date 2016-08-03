@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.MinMaxScalerModelInfo;
 import org.apache.spark.ml.feature.MinMaxScalerModel;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,7 +12,7 @@ import java.util.Set;
  */
 public class MinMaxScalerModelInfoAdapter extends AbstractModelInfoAdapter<MinMaxScalerModel, MinMaxScalerModelInfo> {
     @Override
-    public MinMaxScalerModelInfo getModelInfo(final MinMaxScalerModel from, final DataFrame df) {
+    public MinMaxScalerModelInfo getModelInfo(final MinMaxScalerModel from) {
         final MinMaxScalerModelInfo modelInfo = new MinMaxScalerModelInfo();
         modelInfo.setOriginalMax(from.originalMax().toArray());
         modelInfo.setOriginalMin(from.originalMin().toArray());

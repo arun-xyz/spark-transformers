@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.RegexTokenizerModelInfo;
 import org.apache.spark.ml.feature.RegexTokenizer;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,7 +13,7 @@ import java.util.Set;
 public class RegexTokenizerModelInfoAdapter extends AbstractModelInfoAdapter<RegexTokenizer, RegexTokenizerModelInfo> {
 
     @Override
-    public RegexTokenizerModelInfo getModelInfo(final RegexTokenizer from, final DataFrame df) {
+    public RegexTokenizerModelInfo getModelInfo(final RegexTokenizer from) {
         final RegexTokenizerModelInfo modelInfo = new RegexTokenizerModelInfo();
         modelInfo.setMinTokenLength(from.getMinTokenLength());
         modelInfo.setGaps(from.getGaps());

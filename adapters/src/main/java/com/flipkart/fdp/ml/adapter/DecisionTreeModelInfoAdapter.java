@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.mllib.tree.model.Node;
 import org.apache.spark.mllib.tree.model.Split;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.Stack;
 
@@ -43,7 +42,7 @@ public class DecisionTreeModelInfoAdapter
         }
     }
 
-    public DecisionTreeModelInfo getModelInfo(final DecisionTreeModel decisionTreeModel, DataFrame df) {
+    public DecisionTreeModelInfo getModelInfo(final DecisionTreeModel decisionTreeModel) {
         final DecisionTreeModelInfo treeInfo = new DecisionTreeModelInfo();
         final Node node = decisionTreeModel.topNode();
         treeInfo.setRoot(node.id());

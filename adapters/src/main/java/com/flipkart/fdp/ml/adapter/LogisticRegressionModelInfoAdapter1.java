@@ -3,7 +3,6 @@ package com.flipkart.fdp.ml.adapter;
 import com.flipkart.fdp.ml.modelinfo.LogisticRegressionModelInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.spark.ml.classification.LogisticRegressionModel;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -17,7 +16,7 @@ public class LogisticRegressionModelInfoAdapter1
         extends AbstractModelInfoAdapter<LogisticRegressionModel, LogisticRegressionModelInfo> {
 
     @Override
-    public LogisticRegressionModelInfo getModelInfo(final LogisticRegressionModel sparkLRModel, DataFrame df) {
+    public LogisticRegressionModelInfo getModelInfo(final LogisticRegressionModel sparkLRModel) {
         final LogisticRegressionModelInfo logisticRegressionModelInfo = new LogisticRegressionModelInfo();
         logisticRegressionModelInfo.setWeights(sparkLRModel.coefficients().toArray());
         logisticRegressionModelInfo.setIntercept(sparkLRModel.intercept());

@@ -15,14 +15,14 @@ public class ModelInfoAdapterFactory {
     private static final Map<String, ModelInfoAdapter> registry = new java.util.HashMap<>();
 
     static {
-        register(new CustomOneHotEncoderModelInfoAdapter());
+        //register(new CustomOneHotEncoderModelInfoAdapter());
         register(new LogisticRegressionModelInfoAdapter());
         register(new LogisticRegressionModelInfoAdapter1());
         register(new DecisionTreeModelInfoAdapter());
         register(new RandomForestModelInfoAdapter());
         register(new StringIndexerModelInfoAdapter());
         register(new HashingTFModelInfoAdapter());
-        register(new OneHotEncoderModelInfoAdapter());
+        //register(new OneHotEncoderModelInfoAdapter());
         register(new RegexTokenizerModelInfoAdapter());
         register(new CountVectorizerModelInfoAdapter());
         register(new StandardScalerModelInfoAdapter());

@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.VectorAssemblerModelInfo;
 import org.apache.spark.ml.feature.VectorAssembler;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -16,7 +15,7 @@ import java.util.LinkedHashSet;
 public class VectorAssemblerModelAdapter extends AbstractModelInfoAdapter<VectorAssembler, VectorAssemblerModelInfo> {
 
     @Override
-    VectorAssemblerModelInfo getModelInfo(VectorAssembler from, DataFrame df) {
+    VectorAssemblerModelInfo getModelInfo(VectorAssembler from) {
         VectorAssemblerModelInfo vectorAssemblerModelInfo = new VectorAssemblerModelInfo();
         vectorAssemblerModelInfo.setInputKeys(new LinkedHashSet<>(Arrays.asList(from.getInputCols())));
         vectorAssemblerModelInfo.setOutputKey(from.getOutputCol());

@@ -6,7 +6,6 @@ import com.flipkart.fdp.ml.modelinfo.ModelInfo;
 import com.flipkart.fdp.ml.modelinfo.PipelineModelInfo;
 import com.flipkart.fdp.ml.utils.Constants;
 import com.google.gson.Gson;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,13 +22,12 @@ public class ModelExporter {
      * The serialization format currently being used is json
      *
      * @param model model info to be exported
-     * @param df    Data frame that is used for training is required for some models as state information is being stored as column metadata by some spark models
      * @return byte[]
      */
-    public static byte[] export(Object model, DataFrame df) {
+    public static byte[] export(Object model) {
         return export(
                 ModelInfoAdapterFactory.getAdapter(model.getClass())
-                        .adapt(model, df)).getBytes(SerializationConstants.CHARSET);
+                        .adapt(model)).getBytes(SerializationConstants.CHARSET);
     }
 
     /**

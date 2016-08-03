@@ -1,3 +1,4 @@
+/*
 package com.flipkart.fdp.ml
 
 /**
@@ -77,3 +78,4 @@ object CustomSchemaUtil {
     StructType(schema.fields :+ col)
   }
 }
+*/

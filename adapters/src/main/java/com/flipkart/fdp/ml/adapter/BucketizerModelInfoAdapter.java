@@ -2,7 +2,6 @@ package com.flipkart.fdp.ml.adapter;
 
 import com.flipkart.fdp.ml.modelinfo.BucketizerModelInfo;
 import org.apache.spark.ml.feature.Bucketizer;
-import org.apache.spark.sql.DataFrame;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -14,7 +13,7 @@ import java.util.Set;
 public class BucketizerModelInfoAdapter extends AbstractModelInfoAdapter<Bucketizer, BucketizerModelInfo> {
 
     @Override
-    public BucketizerModelInfo getModelInfo(final Bucketizer from, final DataFrame df) {
+    public BucketizerModelInfo getModelInfo(final Bucketizer from) {
         final BucketizerModelInfo modelInfo = new BucketizerModelInfo();
         modelInfo.setSplits(from.getSplits());
         Set<String> inputKeys = new LinkedHashSet<String>();

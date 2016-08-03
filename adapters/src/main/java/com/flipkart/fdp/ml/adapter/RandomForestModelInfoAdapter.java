@@ -4,7 +4,6 @@ import com.flipkart.fdp.ml.modelinfo.DecisionTreeModelInfo;
 import com.flipkart.fdp.ml.modelinfo.RandomForestModelInfo;
 import org.apache.spark.mllib.tree.model.DecisionTreeModel;
 import org.apache.spark.mllib.tree.model.RandomForestModel;
-import org.apache.spark.sql.DataFrame;
 
 /**
  * Transforms Spark's {@link RandomForestModel} in MlLib to  {@link com.flipkart.fdp.ml.modelinfo.RandomForestModelInfo} object
@@ -15,22 +14,22 @@ public class RandomForestModelInfoAdapter
 
     private final DecisionTreeModelInfoAdapter bridge = new DecisionTreeModelInfoAdapter();
 
-    private RandomForestModelInfo visitForest(final RandomForestModel randomForestModel, DataFrame df) {
+    private RandomForestModelInfo visitForest(final RandomForestModel randomForestModel) {
         final RandomForestModelInfo randomForestModelInfo = new RandomForestModelInfo();
 
         randomForestModelInfo.setAlgorithm(randomForestModel.algo().toString());
 
         final DecisionTreeModel[] decisionTreeModels = randomForestModel.trees();
         for (DecisionTreeModel i : decisionTreeModels) {
-            DecisionTreeModelInfo tree = bridge.getModelInfo(i, df);
+            DecisionTreeModelInfo tree = bridge.getModelInfo(i);
             randomForestModelInfo.getTrees().add(tree);
         }
         return randomForestModelInfo;
     }
 
     @Override
-    public RandomForestModelInfo getModelInfo(RandomForestModel from, DataFrame df) {
-        return visitForest(from, df);
+    public RandomForestModelInfo getModelInfo(RandomForestModel from) {
+        return visitForest(from);
     }
 
     @Override
